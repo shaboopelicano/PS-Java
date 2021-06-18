@@ -18,20 +18,22 @@ import br.com.supera.game.store.domain.dto.ProductDTO;
 import br.com.supera.game.store.service.ShoppingCartService;
 
 @RestController
-@RequestMapping("/checkout")
-public class CheckoutResource {
+@RequestMapping("/cart")
+public class ShoppingCartResource {
 
     private final ShoppingCartService shoppingCartService;
 
     @Autowired
-    public CheckoutResource(ShoppingCartService shoppingCartService) {
+    public ShoppingCartResource(ShoppingCartService shoppingCartService) {
         this.shoppingCartService = shoppingCartService;
     }
 
     @GetMapping()
-    public ResponseEntity<?> listProducts(@RequestParam("price") double price, @RequestParam("score") double score,
-            @RequestParam("order") String order) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> listProducts(@RequestParam(value = "price", required = false) String price,
+            @RequestParam(value = "score", required = false) String score,
+            @RequestParam(value = "order", required = false) String order) {
+        List<Product> products = shoppingCartService.getProducts(price, score, order);
+        return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
     @PostMapping()
@@ -44,6 +46,11 @@ public class CheckoutResource {
     public ResponseEntity<?> deleteProduct(@RequestBody ProductDTO product) {
         shoppingCartService.removeProduct(product);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("checkout")
+    public ResponseEntity<?> attemptCheckout() {
+        return new ResponseEntity<>(shoppingCartService.getInvoice(),HttpStatus.OK);
     }
 
 }
