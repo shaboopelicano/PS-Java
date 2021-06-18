@@ -1,4 +1,4 @@
-package br.com.supera.game.store;
+package br.com.supera.game.store.domain;
 
 import java.math.BigDecimal;
 
